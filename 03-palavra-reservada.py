@@ -1,4 +1,4 @@
-#Encontre o erro e corrija-o
-class = "Tecnologia"
+# Encontre o erro e corrija-o
+classe = "Tecnologia"
 
-print(class)
+print(classe)
