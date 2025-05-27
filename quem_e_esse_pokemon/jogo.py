@@ -14,16 +14,16 @@ def jogo():
     nome_jogador = input("Digite seu nome: ").strip().lower()
 
     if nome_jogador in jogadores:
-        print(f"🔄 Bem-vindo de volta, {nome_jogador}!")
+        print(f"\n🔄 Bem-vindo de volta, {nome_jogador}!")
         moedas = jogadores[nome_jogador]['moedas']
         rank = jogadores[nome_jogador]['rank']
     else:
-        print(f"👋 Olá, {nome_jogador}! Vamos começar.")
-        moedas = 5
+        print(f"\n👋 Olá, {nome_jogador}! Vamos começar.")
+        moedas = 50
         rank = 0
         jogadores[nome_jogador] = {"moedas": moedas, "rank": rank}
 
-    print("🎮 Bem-vindo ao 'Quem é esse Pokémon?'!\n")
+    print("\n🎮 Bem-vindo ao 'Quem é esse Pokémon?'!")
 
     while moedas > 0:
         nome, id = obter_pokemon_aleatorio()
@@ -32,7 +32,7 @@ def jogo():
             continue
 
         dicas = set()
-        print("🔍 Quem é esse Pokémon?")
+        print("\n🔍 Quem é esse Pokémon?")
         imagem_url_para_ascii(
             f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png")
 
@@ -40,7 +40,7 @@ def jogo():
             print(f"\n{mostrar_progresso(nome, dicas)}")
             print(f"💰 Moedas: {moedas}")
             acao = input(
-                "Digite seu palpite ou escolha [pular | dica | desistir]: ").strip().lower()
+                "Digite uma letra, palpite completo ou [pular | dica | desistir]: ").strip().lower()
 
             if acao == "dica":
                 if moedas <= 0:
@@ -53,6 +53,7 @@ def jogo():
                     moedas -= 1
                 else:
                     print("✅ Todas as letras já foram reveladas!")
+
             elif acao == "pular":
                 if moedas <= 0:
                     print("❌ Sem moedas suficientes!")
@@ -61,21 +62,41 @@ def jogo():
                 print(f"⏩ Pulando... O nome era: {nome}")
                 time.sleep(1)
                 break
+
             elif acao == "desistir":
                 print(f"👋 Você desistiu. O Pokémon era: {nome}")
                 jogadores[nome_jogador]['moedas'] = moedas
                 jogadores[nome_jogador]['rank'] = rank
                 salvar_jogadores(jogadores)
                 return
+
+            elif len(acao) == 1:  # tentativa de letra
+                indices = [i for i, letra in enumerate(
+                    nome) if letra == acao and i not in dicas]
+                if indices:
+                    dicas.update(indices)
+                    print(f"✅ A letra '{acao}' está no nome!")
+                else:
+                    moedas -= 1
+                    print(f"❌ A letra '{acao}' não está no nome. -1 moeda")
+
             elif acao == nome:
-                print(f"🎉 Acertou! Era o {nome.upper()}!\n")
+                print(f"🎉 Acertou! Era o {nome.upper()}!")
                 moedas += 1
                 rank += 1
                 break
-            else:
-                print("❌ Errado! Tente novamente.")
 
-    print("💀 Fim de jogo. Você ficou sem moedas!")
+            else:
+                moedas -= 1
+                print("❌ Palpite incorreto. -1 moeda")
+
+            if set(range(len(nome))) == dicas:
+                print(f"🎉 Você completou o nome! Era {nome.upper()}!")
+                moedas += 1
+                rank += 1
+                break
+
+    print("\n💀 Fim de jogo. Você ficou sem moedas!")
     jogadores[nome_jogador]['moedas'] = 0
     jogadores[nome_jogador]['rank'] = rank
     salvar_jogadores(jogadores)

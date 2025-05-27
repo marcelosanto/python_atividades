@@ -1,6 +1,6 @@
 import os
 
-CAMINHO_ARQUIVO = "dados/jogadores.txt"
+CAMINHO_ARQUIVO = "./quem_e_esse_pokemon/dados/jogadores.txt"
 
 
 def carregar_jogadores():
